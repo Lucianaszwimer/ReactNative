@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, View, Image, Text, TextInput } from 'react-native';
+import { StyleSheet, View, Image, Text, TextInput, Button, Alert } from 'react-native';
 import ScrollViewCommands from 'react-native/Libraries/Components/ScrollView/ScrollViewCommands';
 
 export default function App() {
@@ -26,6 +26,14 @@ export default function App() {
         </TextInput>
       </View>
 
+      <Button 
+        title="Sign In"
+        color="#525252"
+        onPress={() => Alert.alert('Simple Button pressed')}
+      />
+
+      <Text style={styles.minitext}>¿No tenes una cuenta ya registrada?</Text>
+
       <StatusBar style="auto" />
     </View>
   );
@@ -41,7 +49,7 @@ const styles = StyleSheet.create({
 
   text: {
     color: '#fff',
-    marginTop: 60,
+    marginTop: 40,
     fontSize: 25,
     padding: 7,
     paddingHorizontal: 40,
@@ -51,10 +59,17 @@ const styles = StyleSheet.create({
 
   input: {
     height: 40,
-    margin: 40,
+    margin: 20,
     borderColor: 'grey',
     borderBottomWidth: 2,
     paddingHorizontal: 50,
+  },
+
+  minitext: {
+    marginTop: 40, 
+    color: 'white',
+    padding: 50,
+    backgroundColor: '#202e99'
   }
 
 });
