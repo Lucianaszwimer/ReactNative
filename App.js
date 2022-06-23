@@ -1,41 +1,78 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, View, Image, Text, TextInput, Button, Alert, SectionList } from 'react-native';
+import { StyleSheet, View, Image, Text, TextInput, Button, Alert, SafeAreaView, SectionList } from 'react-native';
 import ScrollViewCommands from 'react-native/Libraries/Components/ScrollView/ScrollViewCommands';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
+import { useState, useEffect } from "react";
+import axios from 'axios';
 
-// página para iniciar sesion
+//  ------------------------------------------------------------IMPORTS-----------------------------------------------------------------
+
+export default function App() {
+  const [alumnos, setAlumnos] = useState ([])
+  useEffect (() => {
+    async function getAllAlumnos () {
+      try {
+        const alumnos = await axios.get('http://10.0.2.2:8000/api/alumno/')
+        console.log(alumnos.data)
+        setAlumnos(alumnos.data)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    getAllAlumnos()
+  })
+  return (
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Signin" component={SigninScreen} />
+        <Stack.Screen name="Presente" component={PresenteScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
+// --------------------------------------------INICIA SESION-------------------------------------------------------------------------
 function LoginScreen() {
   const navigation = useNavigation();
+  const [text, onChangeText] = React.useState(undefined);
+  const [number, onChangeNumber] = React.useState(null);
   return (
     <View style={styles.container}>
       <Image source={{ uri: 'https://www.ort.edu.ar/img/LogoOrtArgWeb2017.jpg' }}
         style={{
-          width: 260,
-          height: 150,
+          marginTop: 50,
+          width: 200,
+          height: 120,
         }}
       />
       <Text style={styles.text}>Iniciar Sesion</Text>
 
       <View style={{ alignItems: 'flex-start' }}>
-        <TextInput style={styles.input}
-          //onChangeText={text => onChangeText(text)}
-          value={Number} placeholder="Ingrese su CUIL          ">
-        </TextInput>
-
-        <TextInput style={styles.input}
-          //onChangeText={text => onChangeText(text)}
-          value={Text} placeholder="Ingrese su contraseña">
-        </TextInput>
+        <TextInput
+          style={styles.input}
+          onChangeText={onChangeNumber}
+          value={number}
+          placeholder="Ingrese su CUIL"
+          keyboardType="numeric"
+        />
+        <TextInput
+          style={styles.input}
+          onChangeText={onChangeText}
+          value={text}
+          placeholder="Ingrese su contraseña"
+          keyboardType="text"
+        />
       </View>
 
       <Button
         title="Log in"
         color="#525252"
         onPress={() => navigation.navigate('Presente')}
-        //onPress={() => Alert.alert('Simple Button pressed')}
+      //onPress={() => Alert.alert('Simple Button pressed')}
       />
 
       <Text style={styles.minitext}>¿No tenes una cuenta ya registrada?
@@ -50,29 +87,37 @@ function LoginScreen() {
   );
 }
 
-//página para registrarse
+//---------------------------------------------------REGISTRARSE---------------------------------------------------------------------
 function SigninScreen() {
   const navigation = useNavigation();
+  const [text, onChangeText] = React.useState(undefined);
+  const [number, onChangeNumber] = React.useState(null);
   return (
     <View style={styles.container}>
       <Image source={{ uri: 'https://www.ort.edu.ar/img/LogoOrtArgWeb2017.jpg' }}
         style={{
-          width: 260,
-          height: 150,
+          marginTop: 50,
+          width: 200,
+          height: 120,
         }}
       />
       <Text style={styles.text}>Registrate</Text>
 
       <View style={{ alignItems: 'flex-start' }}>
-        <TextInput style={styles.input}
-          //onChangeText={text => onChangeText(text)}
-          value={Number} placeholder="Ingrese su CUIL          ">
-        </TextInput>
-
-        <TextInput style={styles.input}
-          //onChangeText={text => onChangeText(text)}
-          value={Text} placeholder="Ingrese su contraseña">
-        </TextInput>
+        <TextInput
+          style={styles.input}
+          onChangeText={onChangeNumber}
+          value={number}
+          placeholder="Ingrese su CUIL"
+          keyboardType="numeric"
+        />
+        <TextInput
+          style={styles.input}
+          onChangeText={onChangeText}
+          value={text}
+          placeholder="Ingrese su contraseña"
+          keyboardType="text"
+        />
       </View>
 
       <Button
@@ -87,45 +132,48 @@ function SigninScreen() {
           onPress={() => navigation.navigate('Login')}
         />
       </Text>
-
     </View>
 
   );
 }
 
-//página del paresente/ausente/tarde 
+//----------------------------------------------------PRESENCIA---------------------------------------------------------------------
+
+const DATA = [
+  {
+    title: "Alumnos",
+    data: ["Oliva Fausto", "Rabinowicz Agustin", "Szwimer Luciana"],
+  }
+]
+const Item = ({ title }) => (
+  <View style={styles.item}>
+    <Text style={styles.title}>{title}</Text>
+  </View>
+);
+
 function PresenteScreen() {
   //const navigation = useNavigation();
   return (
-    <View>
-      <SectionList
-          sections={[
-            {title: 'D', data: ['Devin', 'Dan', 'Dominic']}
-          ]}
-          renderItem={({item}) => <Text style={styles.item}>{item}</Text>}
-          renderSectionHeader={({section}) => <Text style={styles.sectionHeader}>{section.title}</Text>}
-          keyExtractor={(item, index) => index}
-        />
-    </View>
-
+    <SafeAreaView>
+      <Text style={{ fontSize: 20, marginVertical: 10 }}>
+        Curso: 5IA    Bloque: 2    Materia: Proyecto
+      </Text>
+      <SectionList style={styles.mainStart}
+        sections={DATA}
+        keyExtractor={(item, index) => item + index}
+        renderItem={({ item }) => <Item title={item} />}
+        renderSectionHeader={({ section: { title } }) => (
+          <Text style={styles.title}>{title}</Text>
+        )}
+      />
+    </SafeAreaView>
 
   );
 }
 
 const Stack = createNativeStackNavigator();
 
-export default function App() {
-  return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Signin" component={SigninScreen} />
-        <Stack.Screen name="Presente" component={PresenteScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
-}
-
+//  ------------------------------------------------------------STYLES-------------------------------------------------------------------------
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -134,22 +182,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
+  mainStart: {
+    flex: 1,
+    marginTop: 70,
+    alignItems: 'flex-start'
+  },
+
+  mainEnd: {
+    flex: 1,
+    marginTop: 70,
+    alignItems: 'flex-end'
+  },
+
   text: {
-    color: '#fff',
-    marginTop: 40,
-    fontSize: 25,
-    padding: 7,
-    paddingHorizontal: 40,
-    borderRadius: 20,
-    backgroundColor: '#202e99',
+    color: '#202e99',
+    marginTop: 30,
+    fontSize: 30,
+    fontWeight: 'bold'
   },
 
   input: {
     height: 40,
-    margin: 20,
-    borderColor: 'grey',
-    borderBottomWidth: 2,
-    paddingHorizontal: 50,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
   },
 
   minitext: {
@@ -157,6 +213,17 @@ const styles = StyleSheet.create({
     color: 'white',
     padding: 50,
     backgroundColor: '#202e99'
+  },
+
+  title: {
+    fontSize: 24
+  },
+
+  item: {
+    backgroundColor: "#d1d1d1",
+    padding: 20,
+    marginVertical: 0.5,
+    container: 'fluid'
   }
 
 });
