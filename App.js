@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, View, Image, Text, TextInput, Button, Alert, SafeAreaView, SectionList } from 'react-native';
+import { StyleSheet, View, Image, Text, TextInput, Button, Alert, SafeAreaView, SectionList, FlatList } from 'react-native';
 import ScrollViewCommands from 'react-native/Libraries/Components/ScrollView/ScrollViewCommands';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -9,12 +9,16 @@ import { useState, useEffect } from "react";
 import axios from 'axios';
 
 //  ------------------------------------------------------------IMPORTS-----------------------------------------------------------------
-
+/*<FlatList
+data={alumnos}
+renderItem={({item})=><Text>{item.Nombre}</Text>}/>*/
 export default function App() {
-  const [alumnos, setAlumnos] = useState ([])
-  useEffect (() => {
-    async function getAllAlumnos () {
+  console.log("Buenas")
+  const [alumnos, setAlumnos] = useState([])
+  useEffect(() => {
+    async function getAllAlumnos() {
       try {
+        console.log('hola')
         const alumnos = await axios.get('http://10.0.2.2:8000/api/alumno/')
         console.log(alumnos.data)
         setAlumnos(alumnos.data)
@@ -23,7 +27,8 @@ export default function App() {
       }
     }
     getAllAlumnos()
-  })
+  }, [])
+
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -34,7 +39,7 @@ export default function App() {
     </NavigationContainer>
   );
 }
-
+console.log('xhau')
 // --------------------------------------------INICIA SESION-------------------------------------------------------------------------
 function LoginScreen() {
   const navigation = useNavigation();
@@ -51,7 +56,7 @@ function LoginScreen() {
       />
       <Text style={styles.text}>Iniciar Sesion</Text>
 
-      <View style={{ alignItems: 'flex-start' }}>
+      <View>
         <TextInput
           style={styles.input}
           onChangeText={onChangeNumber}
@@ -64,7 +69,7 @@ function LoginScreen() {
           onChangeText={onChangeText}
           value={text}
           placeholder="Ingrese su contraseña"
-          keyboardType="text"
+        //keyboardType="text"
         />
       </View>
 
@@ -103,7 +108,7 @@ function SigninScreen() {
       />
       <Text style={styles.text}>Registrate</Text>
 
-      <View style={{ alignItems: 'flex-start' }}>
+      <View>
         <TextInput
           style={styles.input}
           onChangeText={onChangeNumber}
@@ -116,7 +121,7 @@ function SigninScreen() {
           onChangeText={onChangeText}
           value={text}
           placeholder="Ingrese su contraseña"
-          keyboardType="text"
+        //keyboardType="text"
         />
       </View>
 
@@ -138,11 +143,10 @@ function SigninScreen() {
 }
 
 //----------------------------------------------------PRESENCIA---------------------------------------------------------------------
-
 const DATA = [
   {
     title: "Alumnos",
-    data: ["Oliva Fausto", "Rabinowicz Agustin", "Szwimer Luciana"],
+    data: ["Fau"]
   }
 ]
 const Item = ({ title }) => (
@@ -154,20 +158,21 @@ const Item = ({ title }) => (
 function PresenteScreen() {
   //const navigation = useNavigation();
   return (
+    <View>
     <SafeAreaView>
-      <Text style={{ fontSize: 20, marginVertical: 10 }}>
-        Curso: 5IA    Bloque: 2    Materia: Proyecto
-      </Text>
-      <SectionList style={styles.mainStart}
-        sections={DATA}
-        keyExtractor={(item, index) => item + index}
-        renderItem={({ item }) => <Item title={item} />}
-        renderSectionHeader={({ section: { title } }) => (
-          <Text style={styles.title}>{title}</Text>
-        )}
-      />
-    </SafeAreaView>
-
+    <Text style={{ fontSize: 20, marginVertical: 10 }}>
+      Curso: 5IA    Bloque: 2    Materia: Proyecto
+    </Text>
+    <SectionList style={styles.mainStart}
+      sections={DATA}
+      keyExtractor={(item, index) => item + index}
+      renderItem={({ item }) => <Item title={item} />}
+      renderSectionHeader={({ section: { title } }) => (
+        <Text style={styles.title}>{title}</Text>
+      )}
+    />
+  </SafeAreaView>
+  </View>
   );
 }
 
@@ -180,18 +185,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     marginTop: 70,
     alignItems: 'center',
-  },
-
-  mainStart: {
-    flex: 1,
-    marginTop: 70,
-    alignItems: 'flex-start'
-  },
-
-  mainEnd: {
-    flex: 1,
-    marginTop: 70,
-    alignItems: 'flex-end'
   },
 
   text: {
@@ -223,7 +216,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#d1d1d1",
     padding: 20,
     marginVertical: 0.5,
-    container: 'fluid'
   }
 
 });
